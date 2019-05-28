@@ -37,7 +37,7 @@ router.post('/', async (req, res) => {
     } else {
       console.log("if: false(good thing)");
       const id = await db('students').insert(student).returning("id");
-      res.status(201).json({ message: `${student.firstname} has been registered` })
+      res.status(201).json({ message: `${student.firstname} has been registered`, id: id[0] })
     }
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error" })
