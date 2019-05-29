@@ -30,6 +30,7 @@ router.get('/:id', async (req, res) => {
 
 // create new project
 router.post('/', async (req, res) => {
+  console.log('create a new project', req.body);
   const {
     projectName: project_name,
     projectDeadline: project_deadline,
@@ -39,10 +40,10 @@ router.post('/', async (req, res) => {
   try {
     let project = req.body;
     if (!project_name || !project_deadline || !feedback_deadline || !recommendation_deadline) {
-      res.status(400).json({ message: "please fill in all fields" });
+      res.status(400).json({ message: "please fill in all fields2", project_name, project_deadline, feedback_deadline, recommendation_deadline });
     } else {
       const id = await db('projects').insert({ project_name, project_deadline, feedback_deadline, recommendation_deadline }).returning("id");
-      res.status(201).json({ message: `${project_name} has been created` })
+      res.status(201).json({ message: `${project_name} has been created`, id: id[0] })
     }
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error" })

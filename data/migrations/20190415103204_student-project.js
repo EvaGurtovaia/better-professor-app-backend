@@ -28,7 +28,7 @@ exports.up = function (knex) {
     // .onUpdate('CASCADE')
 
     tbl.integer('student_message')
-      .notNullable()
+      .nullable()
       .unsigned()
       .references('id')
       .inTable('messages')
@@ -36,7 +36,7 @@ exports.up = function (knex) {
     // .onUpdate('CASCADE')
 
     tbl.integer('professor_message')
-      .notNullable()
+      .nullable()
       .unsigned()
       .references('id')
       .inTable('messages')
