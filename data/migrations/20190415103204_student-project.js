@@ -9,7 +9,7 @@ exports.up = function (knex) {
       .references('id')
       .inTable('students')
     // .onDelete('RESTRICT')
-    // .onUpdate('CASCADE')
+      .onDelete('CASCADE')
 
     tbl.integer('project_id')
       .notNullable()
@@ -17,7 +17,7 @@ exports.up = function (knex) {
       .references('id')
       .inTable('projects')
     // .onDelete('RESTRICT')
-    // .onUpdate('CASCADE')
+      .onDelete('CASCADE')
 
     tbl.integer('professor_id')
       .notNullable()
@@ -25,7 +25,7 @@ exports.up = function (knex) {
       .references('id')
       .inTable('users')
     // .onDelete('RESTRICT')
-    // .onUpdate('CASCADE')
+      .onDelete('CASCADE')
 
     tbl.integer('student_message')
       .nullable()
@@ -33,7 +33,7 @@ exports.up = function (knex) {
       .references('id')
       .inTable('messages')
     // .onDelete('RESTRICT')
-    // .onUpdate('CASCADE')
+      .onDelete('CASCADE')
 
     tbl.integer('professor_message')
       .nullable()
@@ -41,7 +41,7 @@ exports.up = function (knex) {
       .references('id')
       .inTable('messages')
     // .onDelete('RESTRICT')
-    // .onUpdate('CASCADE')
+      .onDelete('CASCADE')
 
   });
 };

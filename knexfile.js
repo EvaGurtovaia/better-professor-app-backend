@@ -14,6 +14,9 @@ module.exports = {
     connection: {
       filename: './data/better-professor.db3',
     },
+    pool: {
+      afterCreate: (conn, cb) => conn.run('PRAGMA foreign_keys = ON', cb)
+    },
     useNullAsDefault: true,
     migrations: {
       directory: './data/migrations',
@@ -26,6 +29,9 @@ module.exports = {
     client: 'sqlite3',
     connection: {
       filename: './data/test.db3',
+    },
+    pool: {
+      afterCreate: (conn, cb) => conn.run('PRAGMA foreign_keys = ON', cb)
     },
     useNullAsDefault: true,
     migrations: {
