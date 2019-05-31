@@ -21,7 +21,7 @@ router.get('/', async (req, res) => {
     info[i].email = email;
     info[i].project = await db('projects').join('student_project', 'projects.id', '=', 'student_project.project_id')
       .where({ 'student_project.student_id': `${info[i].student_id}` })
-      .select('project_id', 'project_name', 'project_deadline', 'feedback_deadline', 'recommendation_deadline')
+      .select({ id: 'project_id' }, 'project_name', 'project_deadline', 'feedback_deadline', 'recommendation_deadline')
       .distinct('project_id');
 
     for (let j = 0; j < info[i].project.length; j++) {
@@ -64,15 +64,17 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   const {
     student_id,
-    project_id,
-    professor_id
+    project_id
   } = req.body;
+
+  const professor_id = req.decodedJwt.subject;
+
   try {
-    if (!student_id || !project_id || !professor_id ) {
-      res.status(400).json({ message: "please fill in all fields", student_id, project_id, professor_id });
+    if (!student_id || !project_id  ) {
+      res.status(400).json({ message: "please fill in all fields", student_id, project_id });
     } else {
       await db('student_project').insert({ student_id, project_id, professor_id });
-      res.status(201).json({ message: `Project link has been created` });
+      res.status(201).json({ message: `Project link has been created`, student_id, project_id });
     }
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error" })

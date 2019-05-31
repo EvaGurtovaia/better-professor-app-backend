@@ -4,26 +4,22 @@ const jwt = require('jsonwebtoken');
 const secrets = require('../api/secrets.js');
 const db = require('../data/dbConfig.js');
 
-// // get all students
-// router.get('/', async (req, res) => {
-//   try {
-//     const students = await db('student-project');
-//     res.status(200).json(students);
-//   } catch (error) {
-//     res.status(500).json({ message: "Internal server error" });
-//   }
-// });
+// Get a list of projects for a particular student
+router.get('/:id', async (req, res) => {
+  try {
+    const user_id = req.decodedJwt.subject;
+    const student_id = req.params.id;
 
-// // Get a student
-// router.get('/:id', async (req, res) => {
-//   try {
-//     const id = req.params.id
-//     const student = await db('students').where({ id }).first()
-//     res.status(200).json(student)
-//   } catch (err) {
-//     res.status(500).json({ message: "Error trying to GET student!" })
-//   }
-// })
+    const result = await db('projects').join('student_project', 'projects.id', '=', 'student_project.project_id')
+        .where({ 'student_project.student_id': `${student_id}` })
+        .select({ id: 'project_id' }, 'project_name', 'project_deadline', 'feedback_deadline', 'recommendation_deadline')
+        .distinct('project_id');
+
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(500).json({ message: "Error trying to GET a list of project for the student.", err })
+  }
+})
 
 // // create new student
 // router.post('/', async (req, res) => {
