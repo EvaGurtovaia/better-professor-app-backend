@@ -8,6 +8,10 @@ exports.up = function (knex) {
       .notNullable()
       .unique();
 
+    messages
+      .datetime('send_date')
+      .notNullable();
+
   });
 };
 

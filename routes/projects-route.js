@@ -28,6 +28,48 @@ router.get('/:id', async (req, res) => {
   }
 })
 
+
+// Get student messsages in a particular project
+router.get('/:id/messages/:student_id', async (req, res) => {
+  try {
+    const user_id = req.decodedJwt.subject;
+    const project_id = req.params.id;
+    const student_id = req.params.student_id;
+
+    const result = await db('messages')
+      .join('student_project', 'messages.id', '=', 'student_project.student_message')
+      .where({ 'student_project.project_id': project_id })
+      .where({ 'student_project.student_id': student_id })
+      .select();
+
+    res.status(200).json(result)
+  } catch (err) {
+    res.status(500).json({ message: "Error trying to GET messages for student's project!" })
+  }
+})
+
+router.post('/:id/messages/:student_id', async (req, res) => {
+  try {
+    const user_id = req.decodedJwt.subject;
+    const project_id = req.params.id;
+    const student_id = req.params.student_id;
+
+    let { message, send_date }  = req.body;
+    if (!message || !send_date) {
+      res.status(400).json({ message: "please fill in all fields", message, send_date });
+    } else {
+      const id = await db('messages').insert({ message, send_date }).returning("id")[0];
+      await db('student_project').insert({ student_id, project_id, professor_id, student_message: id });
+      res.status(201).json({ message: `Message has been created`, id })
+    }
+
+  } catch (err) {
+    res.status(500).json({ message: "Error trying to POST a new message for student's project!" })
+  }
+})
+
+
+
 // create new project
 router.post('/', async (req, res) => {
   console.log('create a new project', req.body);
