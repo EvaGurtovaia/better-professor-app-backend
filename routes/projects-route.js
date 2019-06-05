@@ -72,29 +72,35 @@ router.get("/:id/messages", async (req, res) => {
     }
 });
 
-router.post("/:id/messages/:student_id", async (req, res) => {
+router.post("/:id/messages", async (req, res) => {
     try {
-        const user_id = req.decodedJwt.subject;
+        const professor_id = req.decodedJwt.subject;
         const project_id = req.params.id;
-        const student_id = req.params.student_id;
 
-        let { message, send_date } = req.body;
-        if (!message || !send_date) {
+        let { message, send_date, to } = req.body;
+        if (!message || !send_date || !to || !to.length) {
             res.status(400).json({
                 message: "please fill in all fields",
                 message,
-                send_date
+                send_date,
+                to
             });
         } else {
             const id = await db("messages")
                 .insert({ message, send_date })
-                .returning("id")[0];
-            await db("student_project").insert({
-                student_id,
-                project_id,
-                professor_id,
-                student_message: id
-            });
+                .returning("id");
+
+            console.log({ message, id });
+            const inserts = to.map(student_id =>
+                db("student_project").insert({
+                    student_id,
+                    project_id,
+                    professor_id,
+                    student_message: id[0]
+                })
+            );
+
+            await Promise.all(inserts);
             res.status(201).json({ message: `Message has been created`, id });
         }
     } catch (err) {
